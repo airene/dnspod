@@ -23,7 +23,7 @@
   docker run -d --name dnspod-go --restart=always --net=host airene/dnspod-go
   ```
 
-- 在浏览器中打开`http://主机IP:9876`，修改你的配置，成功
+- 在浏览器中打开`http://主机IP:9877`，修改你的配置，成功
 
 挂载卷
   ```bash
