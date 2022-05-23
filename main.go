@@ -1,8 +1,8 @@
 package main
 
 import (
-	"ddns-go/dns"
-	"ddns-go/web"
+	"dnspod-go/dns"
+	"dnspod-go/web"
 	"embed"
 	"flag"
 	"log"
@@ -16,7 +16,7 @@ import (
 var listen = flag.String("l", ":9877", "监听地址")
 
 // 更新频率(秒) frequency
-var every = flag.Int("f", 3600, "同步间隔时间(秒)")
+var every = flag.Int("f", 60, "同步间隔时间(秒)")
 
 //go:embed static
 var staticEmbededFiles embed.FS
@@ -44,12 +44,12 @@ func run(firstDelay time.Duration) {
 	http.Handle("/static/", http.FileServer(http.FS(staticEmbededFiles)))
 	http.Handle("/favicon.ico", http.FileServer(http.FS(faviconEmbededFile)))
 
-	http.HandleFunc("/", web.Writing)
+	http.HandleFunc("/", web.Index)
 	http.HandleFunc("/save", web.Save)
 	http.HandleFunc("/logs", web.Logs)
 	http.HandleFunc("/clearLog", web.ClearLog)
 
-	log.Println("监听", *listen, "...")
+	log.Println("Listen Port", *listen, "...")
 
 	// 定时运行
 	go dns.RunTimer(firstDelay, time.Duration(*every)*time.Second)

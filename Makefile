@@ -1,4 +1,4 @@
-.PHONY: build clean test test-race
+.PHONY: build clean
 
 VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
 BIN=dnspod-go
@@ -16,12 +16,6 @@ build: $(DIR_SRC)/main.go
 
 build_docker_image:
 	@$(DOCKER_CMD) build -f ./Dockerfile -t dnspod-go:$(VERSION) .
-
-test:
-	@$(GO) test ./...
-
-test-race:
-	@$(GO) test -race ./...
 
 # clean all build result
 clean:

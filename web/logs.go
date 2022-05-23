@@ -32,9 +32,9 @@ func init() {
 
 // Logs web
 func Logs(writer http.ResponseWriter, request *http.Request) {
-	for _, log := range mlogs.Logs {
-		writer.Write([]byte(log))
-		writer.Write([]byte("<br/>"))
+	for _, logs := range mlogs.Logs {
+		_, _ = writer.Write([]byte(logs))
+		_, _ = writer.Write([]byte("<br/>"))
 	}
 }
 

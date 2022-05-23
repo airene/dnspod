@@ -1,4 +1,4 @@
-module ddns-go
+module dnspod-go
 
 go 1.17
 

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"ddns-go/util"
+	"dnspod-go/util"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -23,14 +23,11 @@ type Config struct {
 		Domains []string
 	}
 	DNS DNSConfig
-	// 禁止公网访问
-	NotAllowWanAccess bool
-	TTL               string
+	TTL string
 }
 
 // DNSConfig DNS配置
 type DNSConfig struct {
-	// 名称。如：alidns,webhook
 	ID     string
 	Secret string
 }

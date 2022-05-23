@@ -1,8 +1,8 @@
 package dns
 
 import (
-	"ddns-go/config"
-	"ddns-go/util"
+	"dnspod-go/config"
+	"dnspod-go/util"
 	"log"
 	"net/http"
 	"net/url"
@@ -45,7 +45,7 @@ type DnspodStatus struct {
 // Init 初始化
 func (dnspod *Dnspod) Init(conf *config.Config) {
 	dnspod.DNSConfig = conf.DNS
-	dnspod.Domains.GetNewIp(conf)
+	dnspod.Domains.InitGetNewIp(conf)
 	if conf.TTL == "" {
 		// 默认600s
 		dnspod.TTL = "600"
@@ -61,13 +61,14 @@ func (dnspod *Dnspod) AddUpdateDomainRecords() config.Domains {
 }
 
 func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
-	ipAddr, domains := dnspod.Domains.GetNewIpResult(recordType)
+
+	ipAddr := dnspod.Domains.Ipv4Addr
 
 	if ipAddr == "" {
 		return
 	}
 
-	for _, domain := range domains {
+	for _, domain := range dnspod.Domains.Ipv4Domains {
 		result, err := dnspod.getRecordList(domain, recordType)
 		if err != nil {
 			return

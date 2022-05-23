@@ -1,7 +1,7 @@
 package dns
 
 import (
-	"ddns-go/config"
+	"dnspod-go/config"
 	"log"
 	"time"
 )
@@ -22,7 +22,6 @@ func RunTimer(firstDelay time.Duration, delay time.Duration) {
 	}
 }
 
-// RunOnce RunOnce
 func RunOnce() {
 	conf, err := config.GetConfigCache()
 	if err != nil {

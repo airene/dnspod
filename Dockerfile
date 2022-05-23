@@ -3,8 +3,7 @@ FROM golang:1.17 AS builder
 
 WORKDIR /app
 COPY . .
-RUN go env -w GO111MODULE=on \
-    && make clean build
+RUN go env -w GO111MODULE=on && make clean build
 
 # final stage
 FROM alpine
