@@ -14,7 +14,7 @@ import (
 )
 
 // 监听地址 listen_port
-var listen = flag.String("l", "localhost:9877", "监听地址")
+var listen = flag.String("l", ":9877", "监听地址")
 
 // 更新频率(秒) frequency
 var every = flag.Int("f", 3600, "同步间隔时间(秒)")
