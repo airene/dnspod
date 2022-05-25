@@ -44,13 +44,9 @@ type DnspodStatus struct {
 // Init 初始化
 func (dnspod *Dnspod) Init(conf *config.Config) {
 	dnspod.DNSConfig = conf.DNS
-	dnspod.Domains.InitGetNewIp(conf)
-	if conf.TTL == "" {
-		// 默认600s
-		dnspod.TTL = "600"
-	} else {
-		dnspod.TTL = conf.TTL
-	}
+	dnspod.Domains.InitGetIp(conf)
+	dnspod.TTL = conf.TTL
+
 }
 
 // AddUpdateDomainRecords 添加或更新IPv4
@@ -61,13 +57,14 @@ func (dnspod *Dnspod) AddUpdateDomainRecords() config.Domains {
 
 func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
 
-	ipAddr := dnspod.Domains.Ipv4Addr
+	ipAddr, domains := dnspod.Domains.CompareIP()
 
+	//hack 用 CompareIP返回空表示IP未变
 	if ipAddr == "" {
 		return
 	}
 
-	for _, domain := range dnspod.Domains.Ipv4Domains {
+	for _, domain := range domains {
 		result, err := dnspod.getRecordList(domain, recordType)
 		if err != nil {
 			return

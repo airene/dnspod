@@ -1,6 +1,7 @@
 package config
 
 import (
+	"dnspod-go/util"
 	"log"
 	"strings"
 )
@@ -28,8 +29,8 @@ func (d Domain) GetSubDomain() string {
 	return "@"
 }
 
-// InitGetNewIp 接口获得ip并校验用户输入的域名 在程序启动时候执行
-func (domains *Domains) InitGetNewIp(conf *Config) {
+// InitGetIp 接口获得ip并校验用户输入的域名 每次执行都要用到
+func (domains *Domains) InitGetIp(conf *Config) {
 	domains.Ipv4Domains = checkParseDomains(conf.Ipv4.Domains)
 	// IPv4
 	if len(domains.Ipv4Domains) > 0 {
@@ -40,7 +41,17 @@ func (domains *Domains) InitGetNewIp(conf *Config) {
 			log.Println("未能获取IPv4地址, 将不会更新")
 		}
 	}
+}
 
+// CompareIP 获得GetNewIp结果
+func (domains *Domains) CompareIP() (ipAddr string, retDomains []*Domain) {
+	// IPv4
+	if util.Ipv4Cache.Check(domains.Ipv4Addr) {
+		return domains.Ipv4Addr, domains.Ipv4Domains
+	} else {
+		log.Printf("探测IP完成，IP和配置都未改变！")
+		return "", domains.Ipv4Domains
+	}
 }
 
 // 校验并解析用户输入的域名
