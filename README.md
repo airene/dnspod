@@ -17,8 +17,7 @@ DDNS 获得你的公网IPv4，并提交到DNSPOD
 - 项目依赖更小，优化go:embed使用
 - 配置更简单， `-f`就是程序的执行频率，默认1小时检查一次
 - 去掉配置页面外部框架依赖，体积更小
-
-- [ ]升级到最新的1.18版本，并与golang新版本保持同步
+- 升级到最新的1.18版本，并与golang新版本保持同步
 
 ## TODO
 - [x] 项目级别代码refactor 去掉本地比较5次再强制更新的策略
@@ -42,7 +41,7 @@ docker run -d --name dnspod-go --restart=always --net=host airene/dnspod-go -l :
 
 ## 界面
 
-带补充
+![dnspod](dnspod.png)
 
 ## 开发&自行编译
 
