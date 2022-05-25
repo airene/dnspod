@@ -18,7 +18,7 @@ func GetConfigFilePath() string {
 	return getConfigFilePathDefault()
 }
 
-// getConfigFilePathDefault 获得默认的配置文件路径
+// 获得默认的配置文件路径
 func getConfigFilePathDefault() string {
 	dir, err := homedir.Dir()
 	if err != nil {

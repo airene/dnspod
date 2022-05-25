@@ -1,0 +1,194 @@
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="airene">
+    <title>Dnspod-GO</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0
+        }
+
+        a:link, a:visited {
+            text-decoration: none;
+            color: #06f;
+        }
+
+        body {
+            font-size: 14px;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+            color: #666;
+        }
+
+        main {
+            width: 1000px;
+        }
+
+        main label {
+            display: block;
+        }
+
+        main ul li {
+            list-style: none;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: 24px;
+            border-bottom: 1px solid #ddd;
+            padding: 0 10px 3px;
+            margin-bottom: 10px;
+        }
+
+        h1 span {
+            padding-top: 15px;
+            font-size: 12px;
+            float: right;
+        }
+
+        h1 strong {
+            color: #222;
+        }
+
+        .form {
+            width: 400px;
+            float: left;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        input, textarea, select {
+            padding: 8px;
+            outline: none;
+            border: 1px solid #ddd;
+            width: 360px;
+            font-size: 14px;
+            font-family: "PingFang SC", sans-serif;
+        }
+
+        select {
+            padding: 6px;
+        }
+
+        .logs {
+            width: 600px;
+            float: right;
+            padding: 15px;
+            box-sizing: border-box;
+            line-height: 20px;
+            font-size: 12px;
+        }
+
+        h2 {
+            font-size: 14px;
+        }
+
+        .btn {
+            padding: 4px 13px;
+            background: #06f;
+            color: #fff;
+            border: 1px solid #06f;
+        }
+
+        .btn.normal {
+            background: #fff;
+            color: #666;
+            border: 1px solid #666;
+        }
+    </style>
+</head>
+
+<body>
+<main>
+    <h1>
+        <a target="_blank" href="https://github.com/airene/dnspod">Dnspod-GO </a>
+        <span>version: <strong id="version"></strong></span>
+    </h1>
+    <div class="form">
+        <ul>
+            <li>
+                <a target='_blank' href='https://console.dnspod.cn/account/token'>如何创建Token？</a>
+            </li>
+            <li><label for="t_id">Token ID</label><input id="t_id"/></li>
+            <li><label for="t_secret">Token Secret</label><input id="t_secret"/></li>
+            <li><label for="url">获取IP的URL</label><input id="url"/></li>
+            <li><label for="domains">DDNS域名，多条用英文逗号隔开</label><textarea id="domains" rows="4"></textarea></li>
+            <li>
+                <label for="ttl">TTL</label>
+                <select id="ttl" style="width: 100px">
+                    <option value="600">10分钟</option>
+                    <option value="1800">半小时</option>
+                    <option value="3600">一个小时</option>
+                </select>
+            </li>
+            <li>
+                <button class="btn" onclick="saveConfig()">保存</button>
+                <strong id="saveMsg"></strong>
+            </li>
+
+        </ul>
+    </div>
+    <div class="logs">
+        <h2>执行日志：</h2>
+        <div id="logs" style="padding:15px 0"></div>
+        <button class="btn normal" onclick="clearLog()">清除</button>
+    </div>
+</main>
+
+<script>
+    // 初始化
+    function $(id) {
+        return document.getElementById(id)
+    }
+
+    fetch("/config").then((res) => {
+            return res.json()
+        }
+    ).then((data) => {
+        $("t_id").value = data.DNS.ID
+        $("t_secret").value = data.DNS.Secret
+        $("url").value = data.Ipv4.URL
+        $("domains").value = data.Ipv4.Domains
+        $("ttl").value = data.TTL
+        $("version").innerText = data.Version
+    })
+
+    // 保存
+    function saveConfig() {
+        let config = {DNS: {}, Ipv4: {}, TTL: ""}
+        config.DNS.ID = $("t_id").value
+        config.DNS.Secret = $("t_secret").value
+        config.Ipv4.URL = $("url").value
+        config.Ipv4.Domains = $("domains").value
+        config.TTL = $("ttl").value
+        fetch("/save", {method: "POST", body: JSON.stringify(config)}).then((res) => {
+            return res.text()
+        }).then((data) => {
+            $("saveMsg").innerHTML = data === "ok" ? "<span style='color:#090'>保存成功</span>" : "<span style='color:#900'>保存遇到问题！</span>"
+        })
+    }
+
+    // 日志
+    function getLogs() {
+        fetch("/logs").then((res) => {
+            return res.text()
+        }).then((data) => {
+            $("logs").innerHTML = data
+        })
+    }
+    getLogs()
+    //每十秒刷新日志
+    setInterval(getLogs, 10000)
+
+    function clearLog() {
+        fetch("/clearLog").then(() => {
+            getLogs()
+        })
+    }
+</script>
+</body>
+</html>

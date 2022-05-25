@@ -14,8 +14,7 @@ const (
 	recordCreateAPI string = "https://dnsapi.cn/Record.Create"
 )
 
-// Dnspod https://cloud.tencent.com/document/api/302/8516
-// Dnspod 腾讯云dns实现
+// Dnspod 腾讯云dns实现 https://cloud.tencent.com/document/api/302/8516
 type Dnspod struct {
 	DNSConfig config.DNSConfig
 	Domains   config.Domains
@@ -101,9 +100,9 @@ func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *config.Domain,
 		domain,
 	)
 	if err == nil && status.Status.Code == "1" {
-		log.Printf("新增域名解析 %s 成功！IP: %s", domain, ipAddr)
+		log.Printf("新增解析 %s 成功！IP: %s", domain, ipAddr)
 	} else {
-		log.Printf("新增域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
+		log.Printf("新增解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
 	}
 }
 
@@ -131,9 +130,9 @@ func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *config.Domain,
 			domain,
 		)
 		if err == nil && status.Status.Code == "1" {
-			log.Printf("更新域名解析 %s 成功！IP: %s", domain, ipAddr)
+			log.Printf("更新解析 %s 成功！IP: %s", domain, ipAddr)
 		} else {
-			log.Printf("更新域名解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
+			log.Printf("更新解析 %s 失败！Code: %s, Message: %s", domain, status.Status.Code, status.Status.Message)
 		}
 	}
 }

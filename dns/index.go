@@ -14,7 +14,7 @@ type DNS interface {
 
 // RunTimer 定时运行
 func RunTimer(firstDelay time.Duration, delay time.Duration) {
-	log.Printf("第一次运行将等待 %d 秒后运行 (等待网络)", int(firstDelay.Seconds()))
+	log.Printf("第一次运行等待 %d 秒后运行 (等待网络)", int(firstDelay.Seconds()))
 	time.Sleep(firstDelay)
 	for {
 		RunOnce()

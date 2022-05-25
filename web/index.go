@@ -2,15 +2,10 @@ package web
 
 import (
 	"dnspod-go/config"
-	"embed"
-	"fmt"
-	"html/template"
+	"encoding/json"
 	"net/http"
 	"os"
 )
-
-//go:embed index.html
-var indexEmbedFile embed.FS
 
 const VersionEnv = "DNSPOD_GO_VERSION"
 
@@ -19,26 +14,12 @@ type writtingData struct {
 	Version string
 }
 
-// Index 填写信息
-func Index(writer http.ResponseWriter, request *http.Request) {
-	tmpl, err := template.ParseFS(indexEmbedFile, "index.html")
-	if err != nil {
-		fmt.Println("html 解析失败..")
-		fmt.Println(err)
-		return
-	}
+// Config 填写信息
+func Config(writer http.ResponseWriter, request *http.Request) {
 
-	conf, err := config.GetConfigCache()
-	if err == nil {
-		// 已存在配置文件
-		_ = tmpl.Execute(writer, &writtingData{Config: conf, Version: os.Getenv(VersionEnv)})
-		return
-	}
+	conf, _ := config.GetConfigCache()
+	writer.Header().Set("Content-Type", "application-json")
+	result, _ := json.Marshal(&writtingData{Config: conf, Version: os.Getenv(VersionEnv)})
+	_, _ = writer.Write(result)
 
-	// 默认值
-	if conf.Ipv4.URL == "" {
-		conf.Ipv4.URL = "https://myip4.ipip.net, https://ip.3322.net"
-	}
-
-	_ = tmpl.Execute(writer, &writtingData{Config: conf, Version: os.Getenv(VersionEnv)})
 }

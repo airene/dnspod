@@ -18,12 +18,15 @@ const Ipv4Reg = `((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-
 
 // Config 配置
 type Config struct {
-	Ipv4 struct {
-		URL     string
-		Domains []string
-	}
-	DNS DNSConfig
-	TTL string
+	Ipv4 Ipv4Config
+	DNS  DNSConfig
+	TTL  string `default:"600"`
+}
+
+// Ipv4Config IPv4配置
+type Ipv4Config struct {
+	URL     string
+	Domains string
 }
 
 // DNSConfig DNS配置
@@ -51,7 +54,7 @@ func GetConfigCache() (conf Config, err error) {
 	}
 
 	// init config
-	cache.ConfigSingle = &Config{}
+	cache.ConfigSingle = &Config{TTL: "600", Ipv4: Ipv4Config{URL: "https://myip4.ipip.net, https://ip.3322.net"}}
 
 	configFilePath := util.GetConfigFilePath()
 	_, err = os.Stat(configFilePath)
@@ -62,7 +65,7 @@ func GetConfigCache() (conf Config, err error) {
 
 	byt, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
-		log.Println("config.yaml读取失败")
+		log.Println("yaml配置文件读取失败")
 		cache.Err = err
 		return *cache.ConfigSingle, err
 	}
@@ -113,7 +116,7 @@ func (conf *Config) GetIpv4Addr() (result string) {
 		url = strings.TrimSpace(url)
 		resp, err := client.Get(url)
 		if err != nil {
-			log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>点击查看接口能否返回IPv4地址</a>,", url))
+			log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>查看能否返回IP</a>,", url))
 			continue
 		}
 		defer resp.Body.Close()

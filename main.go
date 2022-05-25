@@ -5,6 +5,7 @@ import (
 	"dnspod-go/web"
 	"embed"
 	"flag"
+	"io/fs"
 	"log"
 	"net"
 	"net/http"
@@ -13,16 +14,13 @@ import (
 )
 
 // 监听地址 listen_port
-var listen = flag.String("l", ":9877", "监听地址")
+var listen = flag.String("l", "localhost:9877", "监听地址")
 
 // 更新频率(秒) frequency
-var every = flag.Int("f", 60, "同步间隔时间(秒)")
+var every = flag.Int("f", 3600, "同步间隔时间(秒)")
 
 //go:embed static
 var staticEmbededFiles embed.FS
-
-//go:embed favicon.ico
-var faviconEmbededFile embed.FS
 
 // version
 var version = "DEV"
@@ -41,15 +39,14 @@ func main() {
 
 func run(firstDelay time.Duration) {
 	// 启动静态文件服务
-	http.Handle("/static/", http.FileServer(http.FS(staticEmbededFiles)))
-	http.Handle("/favicon.ico", http.FileServer(http.FS(faviconEmbededFile)))
+	http.Handle("/", http.FileServer(getFileSystem()))
 
-	http.HandleFunc("/", web.Index)
+	http.HandleFunc("/config", web.Config)
 	http.HandleFunc("/save", web.Save)
 	http.HandleFunc("/logs", web.Logs)
 	http.HandleFunc("/clearLog", web.ClearLog)
 
-	log.Println("Listen Port", *listen, "...")
+	log.Println("监听端口", *listen, "...")
 
 	// 定时运行
 	go dns.RunTimer(firstDelay, time.Duration(*every)*time.Second)
@@ -60,4 +57,12 @@ func run(firstDelay time.Duration) {
 		time.Sleep(time.Minute)
 		os.Exit(1)
 	}
+}
+
+func getFileSystem() http.FileSystem {
+	fsys, err := fs.Sub(staticEmbededFiles, "static")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return http.FS(fsys)
 }
