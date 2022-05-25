@@ -1,6 +1,6 @@
 module dnspod-go
 
-go 1.17
+go 1.18
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0
