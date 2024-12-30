@@ -24,6 +24,9 @@ DDNS 获得你的公网IPv4，并提交到DNSPOD
 - [x] refactor web page 用 ~~vue3.2~~ 纯原生的html+css+js实现,去掉了jquery、bootstrap依赖
 - [ ] bump to go1.18
 
+## 更新
+-  2024-12-30日 增加了 -c 配置参数选项，之前默认都是找可执行文件所在的目录，换到macOS设置启动开机启动有问题，所以加回配置项  
+
 ## Docker中使用
 
 - 在浏览器中打开`http://主机IP:9877`，修改您的配置

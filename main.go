@@ -43,7 +43,7 @@ func main() {
 	}
 
 	// 延时10秒运行
-	run(10 * time.Second)
+	run(30 * time.Second)
 
 }
 
