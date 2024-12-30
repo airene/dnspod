@@ -54,7 +54,7 @@ func GetConfigCache() (conf Config, err error) {
 	}
 
 	// init config
-	cache.ConfigSingle = &Config{TTL: "600", Ipv4: Ipv4Config{URL: "https://myip4.ipip.net, https://ip.3322.net"}}
+	cache.ConfigSingle = &Config{TTL: "600", Ipv4: Ipv4Config{URL: "https://4.ipw.cn, https://ip.3322.net"}}
 
 	configFilePath := util.GetConfigFilePath()
 	_, err = os.Stat(configFilePath)

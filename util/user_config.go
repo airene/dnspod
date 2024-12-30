@@ -19,7 +19,7 @@ func GetConfigFilePath() string {
 }
 
 // 获得默认的配置文件路径
-func getConfigFilePathDefault() string {
+func GetConfigFilePathDefault() string {
 	dir, err := homedir.Dir()
 	if err != nil {
 		log.Println("Geting current user failed!")
