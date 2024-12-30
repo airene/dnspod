@@ -15,7 +15,7 @@ func GetConfigFilePath() string {
 	if configFilePath != "" {
 		return configFilePath
 	}
-	return getConfigFilePathDefault()
+	return GetConfigFilePathDefault()
 }
 
 // 获得默认的配置文件路径
