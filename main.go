@@ -10,6 +10,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -17,7 +18,10 @@ import (
 var listen = flag.String("l", ":9877", "监听地址")
 
 // 更新频率(秒) frequency
-var every = flag.Int("f", 3600, "同步间隔时间(秒)")
+var every = flag.Int("f", 7200, "同步间隔时间(秒)")
+
+// 配置文件路径
+var configFilePath = flag.String("c", util.GetConfigFilePathDefault(), "配置文件路径")
 
 //go:embed static
 var staticEmbededFiles embed.FS
@@ -31,6 +35,11 @@ func main() {
 		log.Fatalf("解析监听地址异常，%s", err)
 	}
 	_ = os.Setenv(web.VersionEnv, version)
+
+	if *configFilePath != "" {
+		absPath, _ := filepath.Abs(*configFilePath)
+		os.Setenv(util.ConfigFilePathENV, absPath)
+	}
 
 	// 延时10秒运行
 	run(10 * time.Second)
