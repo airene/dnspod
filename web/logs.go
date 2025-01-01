@@ -22,7 +22,7 @@ func (mlogs *MemoryLogs) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-var mlogs = &MemoryLogs{MaxNum: 50}
+var mlogs = &MemoryLogs{MaxNum: 200}
 
 // 初始化日志
 func init() {
