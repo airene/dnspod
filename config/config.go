@@ -3,14 +3,14 @@ package config
 import (
 	"dnspod-go/util"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"regexp"
 	"strings"
 	"sync"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // Ipv4Reg IPv4正则
@@ -63,7 +63,7 @@ func GetConfigCache() (conf Config, err error) {
 		return *cache.ConfigSingle, err
 	}
 
-	byt, err := ioutil.ReadFile(configFilePath)
+	byt, err := os.ReadFile(configFilePath)
 	if err != nil {
 		log.Println("yaml配置文件读取失败")
 		cache.Err = err
@@ -93,7 +93,7 @@ func (conf *Config) SaveConfig() (err error) {
 	}
 
 	configFilePath := util.GetConfigFilePath()
-	err = ioutil.WriteFile(configFilePath, byt, 0600)
+	err = os.WriteFile(configFilePath, byt, 0600)
 	if err != nil {
 		log.Println(err)
 		return
@@ -119,19 +119,26 @@ func (conf *Config) GetIpv4Addr() (result string) {
 			log.Println(fmt.Sprintf("连接失败! <a target='blank' href='%s'>查看能否返回IP</a>,", url))
 			continue
 		}
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Println("读取IPv4结果失败! 接口: ", url)
-			continue
-		}
-		comp := regexp.MustCompile(Ipv4Reg)
-		result = comp.FindString(string(body))
-		if result != "" {
-			return
-		} else {
-			log.Printf("获取IPv4结果失败! 接口: %s ,返回值: %s\n", url, result)
-		}
+		func() {
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+
+				}
+			}(resp.Body)
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				log.Println("读取IPv4结果失败! 接口: ", url)
+				return
+			}
+			comp := regexp.MustCompile(Ipv4Reg)
+			result = comp.FindString(string(body))
+			if result != "" {
+				return
+			} else {
+				log.Printf("获取IPv4结果失败! 接口: %s ,返回值: %s\n", url, result)
+			}
+		}()
 	}
 
 	return

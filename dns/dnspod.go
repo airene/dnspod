@@ -75,13 +75,13 @@ func (dnspod *Dnspod) addUpdateDomainRecords(recordType string) {
 			dnspod.modify(result, domain, recordType, ipAddr)
 		} else {
 			// 新增
-			dnspod.create(result, domain, recordType, ipAddr)
+			dnspod.create(domain, recordType, ipAddr)
 		}
 	}
 }
 
 // 创建
-func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *config.Domain, recordType string, ipAddr string) {
+func (dnspod *Dnspod) create(domain *config.Domain, recordType string, ipAddr string) {
 	status, err := dnspod.commonRequest(
 		recordCreateAPI,
 		url.Values{
@@ -94,7 +94,6 @@ func (dnspod *Dnspod) create(result DnspodRecordListResp, domain *config.Domain,
 			"ttl":         {dnspod.TTL},
 			"format":      {"json"},
 		},
-		domain,
 	)
 	if err == nil && status.Status.Code == "1" {
 		log.Printf("新增解析 %s 成功！IP: %s", domain, ipAddr)
@@ -124,7 +123,6 @@ func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *config.Domain,
 				"ttl":         {dnspod.TTL},
 				"format":      {"json"},
 			},
-			domain,
 		)
 		if err == nil && status.Status.Code == "1" {
 			log.Printf("更新解析 %s 成功！IP: %s", domain, ipAddr)
@@ -135,7 +133,7 @@ func (dnspod *Dnspod) modify(result DnspodRecordListResp, domain *config.Domain,
 }
 
 // 公共
-func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values, domain *config.Domain) (status DnspodStatus, err error) {
+func (dnspod *Dnspod) commonRequest(apiAddr string, values url.Values) (status DnspodStatus, err error) {
 	resp, err := http.PostForm(
 		apiAddr,
 		values,

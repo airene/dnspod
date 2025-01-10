@@ -3,7 +3,7 @@ package util
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -35,8 +35,13 @@ func getHTTPResponseOrg(resp *http.Response, url string, err error) ([]byte, err
 		return nil, err
 	}
 
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 
 	if err != nil {
 		Ipv4Cache.ForceCompare = true
@@ -57,10 +62,10 @@ func CreateHTTPClient() *http.Client {
 	return &http.Client{
 		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
-			Dial: (&net.Dialer{
+			DialContext: (&net.Dialer{
 				Timeout:   10 * time.Second,
 				KeepAlive: 30 * time.Second,
-			}).Dial,
+			}).DialContext,
 			IdleConnTimeout:     10 * time.Second,
 			TLSHandshakeTimeout: 10 * time.Second,
 		},

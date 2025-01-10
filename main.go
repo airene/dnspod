@@ -2,8 +2,8 @@ package main
 
 import (
 	"dnspod-go/dns"
-	"dnspod-go/web"
 	"dnspod-go/util"
+	"dnspod-go/web"
 	"embed"
 	"flag"
 	"io/fs"
@@ -39,7 +39,10 @@ func main() {
 
 	if *configFilePath != "" {
 		absPath, _ := filepath.Abs(*configFilePath)
-		os.Setenv(util.ConfigFilePathENV, absPath)
+		err := os.Setenv(util.ConfigFilePathENV, absPath)
+		if err != nil {
+			return
+		}
 	}
 
 	// 延时10秒运行
